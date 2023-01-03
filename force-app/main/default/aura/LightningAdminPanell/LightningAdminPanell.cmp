@@ -1,0 +1,444 @@
+<aura:component controller="AdminPanelClass" implements="force:appHostable" >
+    <aura:handler name="init" value="{!this}" action="{!c.ShowLoginInformation}" />
+    <aura:attribute name="isProgramtab" type="Boolean" default="false" />
+    <aura:attribute name="ShowSetup" type="Boolean" default="false" />
+    <aura:attribute name="OwnerkeyId" type="string"/>
+    <aura:attribute name="selectRecordId1" type="String"/>
+    <aura:attribute name="SelectSecretKey" type="String"/>
+    <aura:attribute name="selectRecordName1" type="String"/>
+    <aura:attribute name="statusOptions" type="List" default="[]"/>
+    <aura:attribute name="clientId" type="string"/>
+    <aura:attribute name="ShowSetAsDefaultUser" type="boolean" default="false"/>
+    <aura:attribute name="SelectAsDefaultUser" type="boolean" default="false"/>
+    <aura:attribute name="DisableNewRecCancel" type="boolean" default="false"/>
+    <aura:attribute name="ShowBackButton1" type="boolean" default="false"/>
+    <aura:attribute name="isAddmoreUser" type="boolean" default="false"/>
+    <aura:attribute name="isOpenModalForUser" type="boolean" default="false"/>
+    <aura:attribute name="isModalOpen" type="boolean" default="false"/>
+    <aura:attribute name="clientSecret" type="string"/>
+    <aura:attribute name="syncButton" type="Boolean" default="false"/>
+    <aura:attribute name="showlogin" type="boolean" default="false"/>
+    <aura:attribute name="SelectOwnerKeyError" type="boolean" default="false"/>
+    <aura:attribute name="showEdit" type="boolean" default="false"/>
+    <aura:attribute name="showOwnerKey" type="boolean" default="false"/>
+    <aura:attribute name="showUserSpecific" type="boolean" default="false"/>
+    <aura:attribute name="SelectedType" type="string"/>
+    <aura:attribute name="SelectedValue" type="string"/>
+    <aura:attribute name="showLastUpdate" type="boolean" default="false"/>
+    <aura:attribute name="selectedRecord" type="user" default="{}" description="Use,for store SELECTED sObject Record"/>
+    <aura:attribute name="listOfSearchRecords" type="user[]" description="Use,for store the list of search records which returns from apex class"/>
+    <aura:attribute name="SearchKeyWord" type="string"/>
+    <aura:attribute name="OwnerkeyIdForUser" type="string"/>
+    <aura:attribute name="showUserownerKeyPage" type="boolean" default="false"/>
+    <aura:attribute name="islocationtab" type="boolean" default="false"/>
+    <aura:attribute name="isInsurancetab" type="boolean" default="false"/>
+    <aura:attribute name="typeoffield" type="string" default="password"/>
+    <aura:attribute name="lastmodified" type="string" />
+    <aura:attribute name="lastmodifiedprogram" type="string" />
+    <aura:attribute name="checkEntry" type="boolean" default="false"/>
+    <aura:attribute name="showDiv" type="Boolean" default="false" />
+    <aura:attribute name="showApiDiv" type="Boolean" default="false" />
+    <aura:attribute name="showNewUserpage" type="Boolean" default="false" />
+    <aura:attribute name="showSecret" type="Boolean" default="false" />
+    <aura:attribute name="showCompanyDefault"  type="Boolean" default="false" />
+    <aura:attribute name="EditCOmpanyDefault"  type="Boolean" default="false" />
+    <aura:attribute name="OwnerKeyValinEdit1"  type="Boolean" default="false" />
+    <aura:attribute name="disabledbutton"  type="Boolean" default="false"/>
+    <aura:attribute name="selectedItem" type="string" default="Setup API"/>
+    <aura:attribute name="ShowOwnerKeyinEditCompanySpecific"  type="Boolean" default="false" />
+    <aura:attribute name="ShowSpinner"  type="Boolean" default="false"/>
+    <aura:attribute name="ShowSpinnerLoc"  type="Boolean" default="false"/>
+    <aura:attribute name="ShowSpinnerIns"  type="Boolean" default="false"/>
+    <aura:attribute name="showBackButton"  type="Boolean" default="false" />
+    <aura:attribute name="steps" type="List"/>
+    <aura:attribute name="LastModifiedCompanySpecificOwnerKey" type="string" />
+    <aura:attribute name="showApi" type="Boolean" default="false" />
+    <aura:attribute name="apiKey" type="string"/>
+    <aura:attribute name="isMaptab" type="Boolean" default="false" />
+    <aura:attribute name="ShowSpinnerMap" type="Boolean" default="false"/>
+    <aura:attribute name="options" type="List" default="[
+                                                        {'label': 'User Specific Owner Id', 'value': 'UserSpecificownerId'},
+                                                        {'label': 'Company Specific Owner Id', 'value': 'CompanySpecificOwnerId'},
+                                                        ]"/>
+    
+    
+    <aura:handler name="change" value="{!v.ShowSpinner}" action="{!c.ShowSpinnerHandler}"/>
+    <aura:handler name="change" value="{!v.ShowSpinnerLoc}" action="{!c.ShowSpinnerHandlerLoc}"/>
+    <aura:handler name="change" value="{!v.ShowSpinnerIns}" action="{!c.ShowSpinnerHandlerIns}"/>
+    <aura:handler name="change" value="{!v.ShowSpinnerMap}" action="{!c.ShowSpinnerHandlerMap}"/>
+    
+    <ltng:require styles="{!$Resource.LightningAdminPanell}" />
+
+    <div> 
+        <div class="editor slds-card flexipageEditorAppSettings showFooter slds-scrollable_y callStyleLAPOne">
+            <div class="main visualEditorStyle visualEditorBaseEditor flexipageEditorAppSettingsEditor">
+                <div class="editorBody">
+                    <section class="middlePanel column visualEditorBaseEditorPanel">
+                        <div class="slds-grid appSettings">
+                            <div class="panelContainer verticalNav full-height fullnavstyle" >
+                                
+                                <nav class="slds-nav-vertical slds-nav-vertical_shade" aria-label="Sub page">
+                                    <div class="slds-nav-vertical__section">
+                                        <lightning:verticalNavigation onselect="{! c.handleOnSelect }"
+                                                                      selectedItem="{!v.selectedItem}">
+                                            <lightning:verticalNavigationSection label="Admin Panel" >
+                                                <lightning:verticalNavigationItemIcon label="Setup API" name="Setup API"  iconName="standard:password" size="small"/>
+                                                <lightning:verticalNavigationItemIcon label="Owner Key" iconName="custom:custom3" name="OwnerKey"  size="small" />
+                                                <lightning:verticalNavigationItemIcon label="Locations" iconName="standard:sales_value" name="LocationTab"  size="small" />
+                                                <lightning:verticalNavigationItemIcon label="Programs"  iconName="standard:sales_channel" name="ProgramTab"  size="small" />
+                                                <!--Change-->
+                                                <lightning:verticalNavigationItemIcon label="Insurance"  iconName="custom:custom4" name="InsuranceTab"  size="small" />
+                                                <lightning:verticalNavigationItemIcon label="Map Fields"  iconName="custom:custom10" name="MapTab"  size="small" />
+                                                
+                                            </lightning:verticalNavigationSection>
+                                        </lightning:verticalNavigation>
+                                        
+                                    </div>
+                                </nav>
+                            </div>
+                            <div class="navHeight" >
+                                &nbsp;&nbsp;<br/>
+                                &nbsp;&nbsp;
+                                <div class="slds-vertical-tabs__content slds-show PanelWidth " id="slds-vertical-tabs-0" role="tabpanel" aria-labelledby="slds-vertical-tabs-0__nav " >
+                                    <!-- It shows the Setup API page In view     /-->          
+                                    <aura:if isTrue="{!v.showlogin}">  
+                                        <div class="slds-grid">
+                                            <div class="slds-col slds-size_7-of-8"> 
+                                                <h3 class="slds-section__title slds-theme_shade HeaderHeight">
+                                                    <span class="slds-p-horizontal_small slds-truncate"
+                                                          title="Recently Viewed"
+                                                          ><b>Lightning API Credential</b></span>
+                                                </h3></div><div class="slds-col slds-size_1-of-8 slds-theme_shade">    
+                                            <lightning:button variant="brand" label="Edit" title="Edit" onclick="{!c.EditLoginDetail}" class="slds-m-right_x-large btn" />
+                                            </div>
+                                        </div>
+                                        <div class="slds-media__body" >
+                                            <img src="{!$Resource.SiteLogo}" class="Image" />
+                                        </div>
+                                        <div class="slds-align_absolute-center Panelmargin">
+                                            <div class="slds-box boxSize" >
+                                                <div  class="slds-p-top_xxx-small BoxFont">
+                                                    Client Id
+                                                    <lightning:helptext content="Client Id Provided by the Lightning Step"/></div>
+                                                <lightning:input  aura:id="ClientId" value="{!v.clientId}" placeholder="Enter client Id" disabled="true" class=" slds-form-element__control wizard-form-input slds-form-element clientIdInputField"  />
+                                                <div class="slds-p-top_xxx-small PasswordSecretKey">Secret Key <lightning:helptext content="Secret Key Provided by the Lightning Step"/></div> 
+                                                <aura:if isTrue="{!v.showSecret == false}">
+                                                    <lightning:input type="password" aura:id="clientSecret" value="{!v.clientSecret}"  placeholder="Enter secret key" disabled="true" class=" slds-form-element__control  slds-form-element passwordInput"  ></lightning:input>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.showSecret == true}">
+                                                    <lightning:input type="text" aura:id="clientSecretText" value="{!v.clientSecret}"  placeholder="Enter secret key" disabled="true" class=" slds-form-element__control  slds-form-element passwordInput"  ></lightning:input>
+                                                </aura:if>
+                                                <div class="ButtonDiv">
+                                                    <button class="slds-input__icon slds-input__icon_right slds-button slds-button_icon iconheight ButtonPreview"  onclick="{!c.ShowSecretKeyInView}">
+                                                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="utility:preview" size="small" alternativeText="icon" />
+                                                    </button>       
+                                                </div>
+                                                <!--Bearer Token-->
+                                                <div class="slds-p-top_xxx-small PasswordSecretKey">Bearer Token<lightning:helptext content="Api Key Provided by the Lightning Step"/></div> 
+                                                <aura:if isTrue="{!v.showApi == false}">
+                                                    <lightning:input type="password" aura:id="apiKey" value="{!v.apiKey}"  placeholder="Enter Api key" disabled="true" class=" slds-form-element__control  slds-form-element passwordInput"  ></lightning:input>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.showApi == true}">
+                                                    <lightning:input type="text" aura:id="apiKeyText" value="{!v.apiKey}"  placeholder="Enter Api key" disabled="true" class=" slds-form-element__control  slds-form-element passwordInput"  ></lightning:input>
+                                                </aura:if>
+                                                <div class="ButtonDiv">
+                                                    <button class="slds-input__icon slds-input__icon_right slds-button slds-button_icon iconheight ButtonPreview"  onclick="{!c.showApiKeyInView}">
+                                                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="utility:preview" size="small" alternativeText="icon" />
+                                                    </button>       
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </aura:if>
+                                    <!--It shows the client id and secret in edit mode /-->
+                                    <aura:if isTrue="{!v.showEdit}">
+                                        <h3 class="slds-section__title slds-theme_shade HeaderHeight" >
+                                            <span
+                                                  class="slds-p-horizontal_small slds-truncate"
+                                                  title="Recently Viewed" ><b>Lightning API Credential</b></span>
+                                        </h3>
+                                        <div class="slds-media__body" >
+                                             <img src="{!$Resource.SiteLogo}" class="Image" />                                     
+                                        </div>
+                                        <aura:if isTrue="{!v.checkEntry}">
+                                            <div class="slds-box  slds-theme_error checkEntrystyle"  ><lightning:icon iconName="utility:error" alternative-text="Error!" title="Error" size="small"   class="icn"></lightning:icon>
+                                                &nbsp; &nbsp;&nbsp;Please check the Client Id / Client  Secret Key / Api Key </div>        
+                                        </aura:if>
+                                        <div class="slds-align_absolute-center Panelmargin" >
+                                            <div class="slds-box boxSize" >
+                                                <div class="slds-p-top_xxx-small BoxFont" >
+                                                    Client Id
+                                                    <lightning:helptext content="Client Id Provided by the Lightning Step"/></div>
+                                                <lightning:input   aura:id="ClientId1" value="{!v.clientId}" placeholder="Enter client Id" class=" slds-form-element__control wizard-form-input slds-form-element clientIdInputField"/>
+                                                <div class="slds-p-top_xxx-small PasswordSecretKey" >Secret Key <lightning:helptext content="Secret Key Provided by the Lightning Step"/></div> 
+                                                <aura:if isTrue="{!v.showDiv == false}">
+                                                    <lightning:input type="password" aura:id="clientSecret1"  value="{!v.clientSecret}"  placeholder="Enter secret key" class="callStyleLAPTwo"/>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.showDiv == true}">
+                                                    <lightning:input type="text" aura:id="passwordText" value="{!v.clientSecret}"  placeholder="Enter secret key" class="callStyleLAPThree"/>
+                                                </aura:if>
+                                                <div class="ButtonDiv" >
+                                                    <button class="slds-input__icon slds-input__icon_right slds-button slds-button_icon iconheight EditSecretKey" onclick="{!c.ShowSecretKey}">
+                                                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="utility:preview" size="small" alternativeText="icon" />
+                                                    </button>       
+                                                </div>
+                                                <!--Bearer Token-->
+                                                <div class="slds-p-top_xxx-small PasswordSecretKey" >Bearer Token<lightning:helptext content="Api Key Provided by the Lightning Step"/></div> 
+                                                <aura:if isTrue="{!v.showApiDiv == false}">
+                                                    <lightning:input type="password" aura:id="apiKey1"  value="{!v.apiKey}"  placeholder="Enter Api key" class="callStyleLAPTwo"/>
+                                                </aura:if>
+                                                <aura:if isTrue="{!v.showApiDiv == true}">
+                                                    <lightning:input type="text" aura:id="apiKeyText1" value="{!v.apiKey}"  placeholder="Enter Api key" class="callStyleLAPThree"/>
+                                                </aura:if>
+                                                <div class="ButtonDiv" >
+                                                    <button class="slds-input__icon slds-input__icon_right slds-button slds-button_icon iconheight EditSecretKey" onclick="{!c.ShowApiKey}">
+                                                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="utility:preview" size="small" alternativeText="icon" />
+                                                    </button>       
+                                                </div>
+                                                
+                                                <div slot="footer" class="slds-grid  slds-p-around_x-small slds-grid_align-center ">
+                                                    <lightning:button label="Save" onclick="{!c.savePanelval}" variant="brand" class="slds-m-left_x-small"></lightning:button>
+                                                    <lightning:button label="Cancel" variant="neutral" onclick="{!c.cancelAction}" class="slds-m-left_x-small" disabled="{!v.disabledbutton}"></lightning:button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </aura:if>
+                                    <!-- It shows thw owner key page for both company specific and owner key/-->
+                                    <aura:if isTrue="{!v.ShowSetup}">
+                                        <div class="slds-text-longform">
+                                            <div class="slds-section slds-is-open callStyleLAPFour">
+                                                <h3 class="slds-section__title slds-theme_shade HeaderHeight" >
+                                                    <span
+                                                          class="slds-p-horizontal_small slds-truncate"
+                                                          title="Recently Viewed"
+                                                          ><b>Setup Owner Key</b></span>
+                                                </h3>
+                                                <!--owner key page for user specific owner key/-->
+                                                <aura:if isTrue="{!v.showUserSpecific}"> 
+                                                    <div class="slds-grid UserSpecificmargin" >
+                                                        <div class="slds-col slds-size_2-of-8"></div>
+                                                        <div class="slds-col slds-size_5-of-8">
+                                                            <c:ShowUserLookup  aura:id ="LookupCmp" objectName="User" fieldName="Name" Label="Owner Id" selectRecordId="{!v.selectRecordId1}" selectRecordName="{!v.selectRecordName1}" required="false" iconName="utility:adduser"/>
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-8"></div>
+                                                        
+                                                    </div>
+                                                    <div class="slds-grid GridMargin" >
+                                                        <div class="slds-col slds-size_2-of-8"></div>
+                                                        <div class="slds-col slds-size_5-of-8">
+                                                            <div class="slds-p-top_xxx-small GridTestSize " ><b><span >Enter Owner key</span></b> <div class="st-popover_container slds-form-element slds-m-left--x-small slds-text-align--center helptextCss"> <lightning:helptext content="Enter Owner Key for User Specific Owner Key"/></div> 
+                                                            </div>
+                                                            <div class="slds-form-element__control slds-input-has-icon slds-input-has-icon--right MarginCOl" >
+                                                                
+                                                                <aura:if isTrue="{!v.showNewUserpage==false}">
+                                                                    
+                                                                    <lightning:input type="password"   aura:id="ownerkeyvalForUser" value="{!v.OwnerkeyIdForUser}"  placeholder="Enter Owner key" class="InputpasswordTypeSize" ></lightning:input>
+                                                                </aura:if>
+                                                                <aura:if isTrue="{!v.showNewUserpage==true}">
+                                                                    
+                                                                    <lightning:input type="text"   aura:id="ownerkeyvalForUsertext"  value=""  placeholder="Enter Owner key" class="InputpasswordTypeSize" ></lightning:input>
+                                                                </aura:if>
+                                                                <div  class="ButtonDiv">
+                                                                    <button class="slds-input__icon slds-input__icon_right slds-button slds-button_icon iconheight PreviewOfOwnerKey" 
+                                                                            onclick="{!c.showNewUserpageFun}">
+                                                                        
+                                                                        <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="utility:preview" size="small" alternativeText="icon" />
+                                                                    </button>       
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-8"></div>
+                                                    </div>
+                                                    <div class="slds-grid CheckBoxGrid">
+                                                        <div class="slds-col slds-size_2-of-8"></div>
+                                                        <div class="slds-col slds-size_5-of-8">
+                                                            <aura:if isTrue="{!v.ShowSetAsDefaultUser}">
+                                                                <lightning:input type="checkbox" label="Select User as A Default User" name="SelectUserAsDefault" checked="{!v.SelectAsDefaultUser}" onclick="{!c.checkSelectAsDefaultValues}"/>
+                                                            </aura:if>
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-8">
+                                                        </div> 
+                                                    </div>
+                                                    <div class="slds-grid Buttonsection" 
+                                                         >
+                                                        <div class="slds-col slds-size_2-of-8"></div>
+                                                        <div class="slds-col slds-size_5-of-8">
+                                                            <div  class="slds-p-around_xxx-small">
+                                                                
+                                                                <lightning:button label="Save" onclick="{!c.saveOwnerKeyValperuser}" variant="brand"  class="slds-m-left_x-small"></lightning:button>
+                                                                <lightning:button label="Cancel" variant="neutral" onclick="{!c.cancelnewRecord}" disabled="{!v.DisableNewRecCancel}"  class="slds-m-left_x-small"></lightning:button>
+                                                            </div></div>
+                                                        
+                                                        
+                                                        <div class="slds-col slds-size_1-of-8"></div>      
+                                                        
+                                                        
+                                                        
+                                                        
+                                                    </div>
+                                                </aura:if>
+                                            </div>
+                                        </div>                               
+                                        
+                                    </aura:if>
+                                    <!-- Shows error message when owner key is not filled /-->
+                                    <aura:if isTrue="{!v.SelectOwnerKeyError}">
+                                        <div class="slds-box  slds-theme_error SelectOwnerKeyError" 
+                                             ><lightning:icon iconName="utility:error" alternative-text="Error!" title="Error" size="small"   class="icn"></lightning:icon>
+                                            &nbsp; &nbsp;&nbsp;Please Select user/Fill Owner Key Value</div>  
+                                    </aura:if> 
+                                    <!-- shows the value of company specific owner key/-->          
+                                    <!---to edit the owner key of company specific owner key/-->
+                                    <!-- It shows user Info with their owner key/-->          
+                                    <aura:if isTrue="{!v.showUserownerKeyPage}">
+                                        <div class="slds-page-header slds-page-header_record-home">
+                                            <div class="slds-page-header__row">
+                                                <div class="slds-page-header__col-title">
+                                                    <div class="slds-media">
+                                                        <div class="slds-media__figure">
+                                                            <span class="slds-icon_container slds-icon-standard-opportunity">
+                                                                
+                                                            </span>
+                                                        </div>
+                                                        <div class="slds-media__body">
+                                                            <div class="slds-page-header__name">
+                                                                <div class="slds-page-header__name-title">
+                                                                    <h1>
+                                                                        <span>User Specific Owner Keys</span>
+                                                                        <span class="slds-page-header__title slds-truncate" title="User Specific Owner Key">User Specific Owner Key</span>
+                                                                    </h1>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="slds-page-header__col-actions">
+                                                    <div class="slds-page-header__controls">
+                                                        <div class="slds-page-header__control">
+                                                            
+                                                        </div>
+                                                        <div class="slds-page-header__control">
+                                                            <ul class="slds-button-group-list">
+                                                                
+                                                                <li class="buttonalign" >
+                                                                    <lightning:button label="Add more" onclick="{!c.addMoreAction}" variant="brand" class=" slds-m-left_x-small buttonRadius" />
+                                                                </li>
+                                                                <li>
+                                                                    <lightning:button variant="brand-outline" label="Change Default User" title="Change Default User" onclick="{!c.ChangeDefaultuser}"  class="slds-m-left_x-small buttonRadius"  />
+                                                                </li>
+                                                                
+                                                            </ul>
+                                                        </div>
+                                                        <div class="slds-page-header__control">
+                                                            
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>       
+                                        
+                                        <div class="slds-box slds-grid">
+                                            <c:UserownerKeyTable aura:id="childCmp" />
+                                        </div>
+                                        
+                                        
+                                    </aura:if>  
+                                    
+                                    <aura:if isTrue="{!v.islocationtab}">
+                                        <div class="slds-align--absolute-center">
+                                            <lightning:spinner aura:id="spinnerLoc" variant="brand" size="large" class="slds=hide"/>
+                                        </div>
+                                        <c:LocationTab ShowSpinnerLoc="{!v.ShowSpinnerLoc}"/>
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!v.isProgramtab}">
+                                        <div class="slds-align--absolute-center">
+                                            <lightning:spinner aura:id="spinner" variant="brand" size="large" class="slds=hide"/>
+                                        </div>       
+                                        <c:ProgramTab ShowSpinner="{!v.ShowSpinner}"/>
+                                        
+                                    </aura:if>
+                                    <aura:if isTrue="{!v.isInsurancetab}">
+                                        <div class="slds-align--absolute-center">
+                                            <lightning:spinner aura:id="spinnerIns" variant="brand" size="large" class="slds=hide"/>
+                                        </div>       
+                                        <c:InsuranceTab ShowSpinnerIns="{!v.ShowSpinnerIns}"/> 
+                                    </aura:if>
+                                    
+                                    <aura:if isTrue="{!v.isMaptab}">
+                                        <div class="slds-align--absolute-center">
+                                           <!-- <lightning:spinner aura:id="spinnerMap" variant="brand" size="large" class="slds=hide"/>-->
+                                        </div>       
+                                        <c:MapTab ShowSpinnerMap ="{!v.ShowSpinnerMap}"/>
+                                        
+                                    </aura:if>
+                                </div>                             
+                                
+                            </div>
+                            
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <lightning:spinner
+                       aura:id="mySpinner"
+                       alternativeText="Processing.."
+                       title="Processing.."
+                       variant="brand"
+                       size="large"
+                       class="slds-hide" />
+    <!-- Modal popup to change owner key type from company specific to user  specific/-->
+    <aura:if isTrue="{!v.isOpenModalForUser}">
+        
+        <!-- Modal/Popup Box starts here-->
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <!-- Modal/Popup Box Header Starts here-->
+                <header class="slds-modal__header">
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{! c.closeModel }"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Change Default User</h2>
+                </header>
+                <!--Modal/Popup Box Body Starts here-->
+                <div class="slds-modal__content slds-p-around_medium modalHeight" id="modal-content-id-1">
+                    <div class="slds-grid ModalGridStyle">
+                        <div class="slds-col slds-size_8-of-8">                                
+                            <div >                                              
+                                
+                                <div  class="TypeTextCSS"><b><span >Select User</span></b> <div class="st-popover_container slds-form-element slds-m-left--x-small slds-text-align--center helptextCss" > <lightning:helptext content="Selected User will be Saved as Default User for the org"/></div> 
+                                </div>
+                                <div class="slds-form-element__control modalComboBox">
+                                    <lightning:combobox aura:id="selectItem" name="User"
+                                                        placeholder="Choose User"
+                                                        value="{!v.SelectedValue}"
+                                                        required="true"
+                                                        dropdownAlignment="right"
+                                                        variant="standard"
+                                                        messageWhenValueMissing="You Must Select the Value"
+                                                        options="{!v.statusOptions}"/></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!--Modal/Popup Box Footer Starts here-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral"
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{!c.closeModel}"/>
+                    <lightning:button variant="brand"
+                                      label="Update"
+                                      title="Update"
+                                      onclick="{!c.handleOptionSelected}"/>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+    <!-- Modal popup to change owner key type from user  specific to company  specific /-->
+    
+</aura:component>

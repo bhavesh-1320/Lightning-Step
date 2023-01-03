@@ -1,0 +1,38 @@
+.THIS.showSpinner{
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+.THIS .spins::after {
+    position: absolute;
+    content: 'Loading';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}
+
+.THIS .test input {
+    -webkit-text-security: disc !important;
+}
+.THIS .slds-dueling-list__options {
+    height: 20rem !important;
+}
+
+.THIS .callStyleAdmitClientCompThree {
+    display:none
+}
+
+.THIS .callStyleAdmitClientCompFour {
+    display:none
+}
+
+
+.THIS .callStyleAdmitClientCmpOne {
+    height:100px;
+    width: 100%;
+}
+
+.THIS .callStyleAdmitClientCmpTwo {
+    padding: 18px;
+}

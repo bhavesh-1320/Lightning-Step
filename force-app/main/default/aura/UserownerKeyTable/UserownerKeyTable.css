@@ -1,0 +1,65 @@
+.THIS hidebtnfocus{
+    outline:none; 
+    box-shadow:none;
+}
+.THIS .slds-modal__header {
+    border-bottom-color: white;
+                }
+                
+                
+.THIS .slds-modal__footer {
+    background-color: white;
+    border-bottom-color: white;
+    text-align: center;
+    border-top-color: white; 
+}
+.THIS .TableStyle{
+    font-size:18px;
+    empty-cells: hide;
+    padding-left:10px;
+}
+.THIS .ErrorMessagecss
+{
+    font-size:1.25em;
+    align:center;
+    margin-left: 20px; 
+    border-color: rgb(194, 57, 52);
+    height: 50px;
+    margin-top:2%;
+    text-align: center;
+}
+.THIS .ContainerSize
+{
+    max-width:70rem;
+    width:60rem;
+}
+.THIS .GridStyleCss
+{
+    margin-top:20px
+}
+.THIS .ModalpopupStyle
+{
+    margin-top: 20px;margin-left: inherit;
+    
+}
+.THIS .DivButtonStyle
+{
+     margin-top: 10px; 
+    outline:none;
+    box-shadow:none;
+    margin-left: -32px;
+}
+.THIS .paddingcell
+{
+        padding-left: 10px;
+}
+
+
+
+.THIS#callStyleUOKTOne {
+    width:4.25rem
+}
+
+.THIS#callStyleUOKTTwo {
+    width:3.25rem 
+}

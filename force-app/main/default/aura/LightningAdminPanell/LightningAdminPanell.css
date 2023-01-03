@@ -1,0 +1,269 @@
+.THIS .slds-vertical-tabs__link {
+    align-items: center;
+    min-width: 0;
+    height: 70px;
+    width:200px;
+    font-size: 18px;
+    font-weight: bold;
+    
+}
+.THIS .slds-vertical-tabs__content {
+    
+    height:450px;
+}
+.THIS .slds-vertical-tabs__nav {
+    width: 300px;
+}
+.THIS .slds-form-element__icon {
+    display: inline-block;
+    position: relative;
+    padding-top: var(--lwc-spacingXxSmall,0.25rem);
+            vertical-align: top;
+            line-height: var(--lwc-lineHeightReset,1);
+                z-index: 1;
+                margin-top: -5px;
+            }
+            
+            .THIS .sizeincrease{
+                font-size:medium;               
+            }   
+            .THIS .buttonalign
+            {
+                padding-right:10px;
+                
+            }
+            .THIS .buttonRadius{
+                border-radius: 3px!important;
+            }
+            .THIS .btn
+            {
+                margin-top:10px;
+            }
+            .THIS .navHeight{
+                width:100%; 
+                background:darkblue;               
+            }
+            .THIS .PanelWidth
+            {
+                height:700px!important;              
+            }
+            .THIS .HeaderHeight
+            
+            {
+                padding-bottom:10px;
+                padding-top:10px;
+                
+            }    
+            .THIS .Image
+            {
+                height: 55px; width:262px;
+                margin-top: 60px;
+                align-items: center;
+                margin-left: 40%;
+            }
+            .THIS .Panelmargin
+            {
+                margin-top:5%
+            }
+            .THIS .boxSize
+            {
+                width:550px;
+            }
+            .THIS .BoxFont
+            {
+                font-family: sans-serif;
+                font-weight: 600;
+            }
+            .THIS .clientIdInputField
+            {
+                margin-left:0.5%;
+                margin-top:-10px;
+            }
+            .THIS .fullnavstyle
+            {
+                background-color: ghostwhite; width: 208px;
+            }
+            .THIS .passwordInput
+            {
+                margin-top:-10px;
+            }
+            .THIS .ButtonDiv
+            {
+                margin-left: inherit;
+                height:0;
+            }
+            .THIS .ButtonPreview{
+                margin-top: -50px;
+                margin-left: 92.5%;
+                outline:none; box-shadow:none;
+            }
+            .THIS .checkEntrystyle{
+                font-size:1.25em; align:center;
+                margin-left: 20px; 
+                border-color: rgb(194, 57, 52);
+                height: 50px;
+                margin-top:2%;
+                text-align: center;
+                
+            }
+            .THIS .PasswordSecretKey
+            {
+                font-family: sans-serif;
+                font-weight: 600;
+                padding-top:30px
+                    
+            }
+            .THIS .EditSecretKey
+            {
+                margin-top: -55px; 
+                outline:none; 
+                box-shadow:none;
+                margin-left:94.5%;
+            }            
+            .THIS .SyncButtonmargin
+            {
+                margin-top: 150px;   
+            }
+            .THIS .LocationSync
+            {
+                background-color: rgb(245, 101, 15);
+                color: rgb(255, 255, 255);
+                width: 165px;
+                height: 48px;
+                align-items: center;
+                padding-left: 38px;
+            }
+            .THIS .TypeTextCSS{
+                display: inline-block;
+                position: relative;
+            }            
+            .THIS .helptextCss
+            {
+                outline: none;
+                display: inline-block;
+                position: relative;               
+            } 
+            .THIS .NewOnwerKeyCss
+            {
+                margin-top:10px;
+                
+            }     
+            .THIS .newOnerKeyPreview
+            {
+                margin-top: -47px;margin-left:95.5%; outline:none; box-shadow:none
+                    
+            }  
+            .THIS .newButtons{
+                margin-top: 4%;
+                
+                margin-left: 35%;                
+                
+                
+            } 
+            .THIS .UserSpecificmargin{
+                margin-top:5%;
+            }
+            .THIS .GridMargin{
+                margin-top:15px;              
+            }
+            .THIS .GridTestSize
+            {
+                font-size:15px;               
+            }
+            .THIS .MarginCOl{
+                margin-top: -15px;             
+            } 
+            .THIS .InputpasswordTypeSize{
+                width:82%;
+            }            
+            
+            .THIS .PreviewOfOwnerKey
+            {
+                margin-right:18%;
+                margin-top: 5px; outline:none; box-shadow:none;
+                
+            } 
+            .THIS .Buttonsection
+            {
+                margin-top: 9%;
+                margin-left: 30%;              
+            }
+            .THIS .SelectOwnerKeyError
+            {
+                font-size:1.25em;
+                align:center;
+                margin-left: 20px;
+                border-color: rgb(194, 57, 52);
+                height: 50px;
+                margin-top:2%;               
+            } 
+            .THIS .marginGrodUser
+            {
+                margin-top:100px;               
+            } 
+            .THIS .MarginInputValues
+            {
+                margin-top: -15px;              
+            }
+            .THIS .GridValCSSmargin
+            {
+                margin-top:20px;   
+            }
+            .THIS .PreviewButtonInUserTypeOwnerKey
+            {
+                margin-left: 870px;
+                margin-top: 4px; outline:none; box-shadow:none;
+            }
+            .THIS .PreviewButtonInEditUserMode
+            {
+                margin-left: -52px;
+                margin-top: 4px; 
+                outline:none; 
+                box-shadow:none;
+            }
+            .THIS .ButtonGirdInEditModeUser
+            {
+                margin-top: 7%;
+                margin-left: 35%;
+            }
+            .THIS .gridForTable{
+                margin-top:30px;   
+                margin-bottom: 5px;
+            }
+            .THIS .margintopclass
+            {
+                margin-top:2%;
+            }
+            .THIS .CheckBoxGrid
+            {
+                margin-top:1.5%               
+            }            
+            .THIS .modalHeight{
+                height: 40rem;
+            } 
+            .THIS   .ModalGridStyle{
+                margin-top:3%;
+                
+            }
+            .THIS .modalComboBox
+            {
+                margin-top: -17px;
+            }
+
+            .THIS .callStyleLAPOne {
+                padding: 18px;
+            }
+
+
+            .THIS .callStyleLAPTwo {
+                margin-top:-10px
+            }
+            
+
+            .THIS .callStyleLAPThree {
+                margin-top:-10px
+            }
+
+            .THIS .callStyleLAPFour {
+                padding-bottom:10px
+            }

@@ -1,0 +1,873 @@
+<aura:component controller="CreateInquiryController"  implements="force:lightningQuickActionWithoutHeader,force:hasRecordId,force:hasSObjectName,flexipage:availableForAllPageTypes,force:appHostable" access="global" >
+    
+    <aura:attribute name="showSpinner" type="Boolean" default="false" />
+    <aura:attribute name="leadRecord" type="Lead"/>
+    <aura:attribute name="myDate" type="date" />
+    <aura:attribute name="ErrorMessage" type="string" />
+    <aura:attribute name="showForm" type="boolean" default="false"/>
+    <aura:attribute name="DOBSection" type="boolean" default="false"/>
+    <aura:attribute name="showError" type="boolean" default="false"/>
+    <aura:attribute name="submissionDatefield" type="date"/>
+    <aura:attribute name="DOB" type="date"/>
+    <aura:attribute name="activeSections" type="List" default="['Personal Information', 'Caller Information', 'Payor Details','Address', 'Insurance Information', 'Case Results', 'Insured Information', 'Check All', 'Additional Personal Information']" />
+    <aura:attribute name="dateValidationError" type="boolean" />
+    <aura:attribute name="insOptions" type="String"/>
+    <aura:attribute name="selectedValue" type="Integer"/>
+    <aura:attribute name="fundSource" type="String"/>
+    <aura:attribute name="alternateName" type="Boolean"/>
+    <aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:attribute name="sObjectName" type="String"/>
+    <aura:attribute name = "recordId" type="Id"/>
+    
+    <ltng:require styles="{!$Resource.LeadInquiryComponent}" /> 
+    
+    <aura:if isTrue="{!v.showError}"> 
+        <div class="demo-only">
+            <div class="slds-modal__container slds-modal_small callLeadInqCmpOne">
+                <header class="slds-modal__header slds-theme_error slds-theme_alert-texture">
+                    <h2 class="slds-text-heading_medium" id="prompt-heading-id">Message Alert</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="prompt-message-wrapper">
+                    <p class="slds-text-align_center slds-text-heading_small">{!v.ErrorMessage}</p>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    <aura:if isTrue="{!v.showForm}">
+        <lightning:recordEditForm aura:id="recordEditForm"
+                                  objectApiName="Lightning_Step__Inquiry__c" onsubmit="{!c.handleSubmit}" onsuccess="{!c.onsuccess}" onload="{!c.loadSection}"> 
+            <div class="modal-header slds-modal__header slds-size_1-of-1">
+                <h4 class="title slds-text-heading--medium">New Inquiry</h4>
+            </div>
+            <!--End Modal Header-->  
+            <!--Modal Body-->  
+            <div class="showFooter slds-scrollable_y callLeadInqCmpTwo">
+                <div class="slds-p-around--x-small slds-align_absolute-left slds-size_1-of-1 slds-is-relative">
+                    
+                    <!--lightning:messages /-->
+                    <div>
+                        <div class="lgc-bg">
+                            <!-- Modal/Popup Box Header Starts here-->
+                            <!--section header-->
+                            <lightning:accordion
+                                                 allowMultipleSectionsOpen="true"
+                                                 onsectiontoggle="{! c.handleSectionToggle }"
+                                                 activeSectionName="{! v.activeSections }"
+                                                 > 
+                                <div class="slds-section" aura:id="personalInfo">
+                                    <lightning:accordionSection name="Personal Information" label="Personal Information"> 
+                                        <div class="slds-section slds-is-open" aura:id="PersonalInfo">
+                                            <div class="slds-section__content" id="PersonalInfoList">
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Salutation__c"
+                                                                              aura:id="Lightning_Step__Salutation__c" />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField label="First Name"
+                                                                              type="text"
+                                                                              fieldName="Lightning_Step__First_Name__c"
+                                                                              aura:id="Lightning_Step__First_Name__c"
+                                                                              required="true"
+                                                                              /> 
+                                                    </div>                             
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField label="Middle Name"
+                                                                              type="text"
+                                                                              fieldName="Lightning_Step__Middle_Name__c"
+                                                                              aura:id="Lightning_Step__Middle_Name__c"
+                                                                              value=""/>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField label="Last Name"
+                                                                              type="text"
+                                                                              fieldName="Lightning_Step__Last_Name__c"
+                                                                              aura:id="Lightning_Step__Last_Name__c"
+                                                                              value=""
+                                                                              required="true"/>
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Suffix__c"
+                                                                              aura:id="Lightning_Step__Suffix__c" />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField label="Home Phone"
+                                                                              fieldName="Lightning_Step__Home_Phone__c"
+                                                                              aura:id="Lightning_Step__Home_Phone__c"
+                                                                              required="true"
+                                                                              />    
+                                                        
+                                                    </div>                             
+                                                </div>                        
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField label="Mobile Phone"
+                                                                              fieldName="Lightning_Step__Primary_Phone__c"
+                                                                              aura:id="Lightning_Step__Primary_Phone__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField label="Work Phone"
+                                                                              fieldName="Lightning_Step__Work_Phone__c"
+                                                                              aura:id="Lightning_Step__Work_Phone__c"
+                                                                              />
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField label="Social Security Number"
+                                                                              fieldName="Lightning_Step__Social_Security_Number__c"
+                                                                              aura:id="Lightning_Step__Social_Security_Number__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <lightning:inputField label="Email"
+                                                                              aura:id="Lightning_Step__Email__c"
+                                                                              fieldName="Lightning_Step__Email__c"
+                                                                              required="true"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField label="Gender"
+                                                                              fieldName="Lightning_Step__GENDER__c"
+                                                                              aura:id="Lightning_Step__GENDER__c"
+                                                                              required="true"
+                                                                              />       
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField label="DOB"
+                                                                              fieldName="Lightning_Step__DOB__c"
+                                                                              aura:id="Lightning_Step__DOB__c"
+                                                                              type="date"
+                                                                              required="true"
+                                                                              />
+                                                    </div> 
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField label="Prefer Language"
+                                                                              fieldName="Lightning_Step__Prefer_Language__c"
+                                                                              aura:id="Lightning_Step__Prefer_Language__c"
+                                                                              />       
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField label="Priority Population"
+                                                                              fieldName="Lightning_Step__Priority_Population__c"
+                                                                              aura:id="Lightning_Step__Priority_Population__c"
+                                                                              />
+                                                    </div> 
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField label="Preferred Method of Contact"
+                                                                              fieldName="Lightning_Step__Preferred_Method_to_Contact__c"
+                                                                              aura:id="Lightning_Step__Preferred_Method_to_Contact__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField label="Lead"
+                                                                              fieldName="Lightning_Step__Lead__c"
+                                                                              aura:id="Lightning_Step__Lead__c"     
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField label="Precipitating Event/Current Situation"
+                                                                              fieldName="Lightning_Step__Precipitating_Event_Curren_Situation__c"
+                                                                              aura:id="Lightning_Step__Precipitating_Event_Curren_Situation__c"     
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField label="Funding Source"
+                                                                              fieldName="Lightning_Step__Funding_Source__c"
+                                                                              type="Number"
+                                                                              required="true"
+                                                                              aura:id="Lightning_Step__Funding_Source__c"
+                                                                              onchange="{!c.handleFundingSource}"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Place_of_Birth__c"
+                                                                              aura:id="Lightning_Step__Place_of_Birth__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Maiden_Name__c"
+                                                                              aura:id="Lightning_Step__Maiden_Name__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2"> 
+                                                            <lightning:inputField fieldName="Lightning_Step__Alternate_First_Name__c"
+                                                                                  aura:id="Lightning_Step__Alternate_First_Name__c"
+                                                                                  onchange="{!c.handleAlternate}"
+                                                                                  />
+                                                        </div>
+                                                        <aura:if isTrue="{!v.alternateName}">
+                                                            <div class="slds-col slds-size_1-of-2"> 
+                                                                <lightning:inputField fieldName="Lightning_Step__Prefers_to_Be_Called__c"
+                                                                                      aura:id="Lightning_Step__Prefers_to_Be_Called__c"
+                                                                                      />
+                                                            </div>
+                                                        </aura:if>
+                                                    </div>
+                                            </div></div>
+                                    </lightning:accordionSection>
+                                </div>
+                                <div class="slds-section" aura:id="AddressList"> 
+                                    <lightning:accordionSection name="Address" label="Address">
+                                        <div class="slds-section slds-is-open" aura:id="PersonalInfo"> 
+                                            <div class="slds-section__content" id="AddressId">
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-1">   
+                                                        
+                                                        <lightning:inputField label="Address"
+                                                                              fieldName="Lightning_Step__Address__c"
+                                                                              aura:id="Lightning_Step__Address__c"
+                                                                              required="true"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-1">   
+                                                        
+                                                        <lightning:inputField fieldName="Lightning_Step__Address_Line_2__c"
+                                                                              aura:id="Lightning_Step__Address_Line_2__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-3">   
+                                                        <lightning:inputField label="City"
+                                                                              fieldName="Lightning_Step__City__c"
+                                                                              aura:id="Lightning_Step__City__c"
+                                                                              required="true"
+                                                                              />
+                                                    </div> 
+                                                    <div class="slds-col slds-size_1-of-3">   
+                                                        <lightning:inputField label="State"
+                                                                              fieldName="Lightning_Step__State_Province__c"
+                                                                              aura:id="Lightning_Step__State_Province__c"
+                                                                              required="true"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">   
+                                                        <lightning:inputField label="Postal Code"
+                                                                              fieldName="Lightning_Step__Postal_Code__c"
+                                                                              type="Number"
+                                                                              aura:id="Lightning_Step__Postal_Code__c"
+                                                                              required="true"
+                                                                              />
+                                                    </div> 
+                                                </div> 
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        
+                                                        <lightning:inputField fieldName="Lightning_Step__Country__c"
+                                                                              aura:id="Lightning_Step__Country__c"
+                                                                              required="true"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                            </div> </div>
+                                    </lightning:accordionSection>
+                                </div>
+                                <div class="slds-section" aura:id="addPersonalInfo">
+                                    <lightning:accordionSection name="Additional Personal Information" label="Additional Personal Information"> 
+                                        <div class="slds-section slds-is-open" aura:id="addPersonalInfo">
+                                            <div class="slds-section__content" id="addPersonalInfoList">
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Sexual_Orientation__c"
+                                                                              aura:id="Lightning_Step__Sexual_Orientation__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Gender_Identity__c"
+                                                                              aura:id="Lightning_Step__Gender_Identity__c"/>
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Preferred_Pronouns__c"
+                                                                              aura:id="Lightning_Step__Preferred_Pronouns__c" />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField fieldName="Lightning_Step__Marital_Status__c"
+                                                                              aura:id="Lightning_Step__Marital_Status__c"
+                                                                              />    
+                                                        
+                                                    </div>                             
+                                                </div>                        
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Occupation__c"
+                                                                              aura:id="Lightning_Step__Occupation__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Race__c"
+                                                                              aura:id="Lightning_Step__Race__c"
+                                                                              />
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Ethnicity__c"
+                                                                              aura:id="Lightning_Step__Ethnicity__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">
+                                                        <lightning:inputField aura:id="Lightning_Step__Employment_Status__c"
+                                                                              fieldName="Lightning_Step__Employment_Status__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Income_Range__c"
+                                                                              aura:id="Lightning_Step__Income_Range__c"
+                                                                              />       
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Household_Composition__c"
+                                                                              aura:id="Lightning_Step__Household_Composition__c"
+                                                                              />
+                                                    </div> 
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Living_Situation__c"
+                                                                              aura:id="Lightning_Step__Living_Situation__c"
+                                                                              />       
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Residence_Type__c"
+                                                                              aura:id="Lightning_Step__Residence_Type__c"
+                                                                              />
+                                                    </div> 
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Religious_Preference__c"
+                                                                              aura:id="Lightning_Step__Religious_Preference__c"
+                                                                              />       
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                       
+                                                    </div> 
+                                                </div>
+                                            </div></div>
+                                    </lightning:accordionSection>
+                                </div>
+                                <div class="slds-section" aura:id="CheckAllL"> 
+                                    <lightning:accordionSection name="Check All" label="Check All That Apply">
+                                        <div class="slds-section slds-is-open" aura:id="CheckInfo"> 
+                                            <div class="slds-section__content" id="CheckId">
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-3">   
+                                                        
+                                                        <lightning:inputField label="Present Legal Issues"
+                                                                              fieldName="Lightning_Step__Present_Legal_Issues__c"
+                                                                              aura:id="Lightning_Step__Present_Legal_Issues__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">  
+                                                        <lightning:inputField label="Legal History"
+                                                                              fieldName="Lightning_Step__Legal_History__c"
+                                                                              aura:id="Lightning_Step__Legal_History__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">  
+                                                        <lightning:inputField label="Previous CD Treatment"
+                                                                              fieldName="Lightning_Step__Previous_CD_Treatment__c"
+                                                                              aura:id="Lightning_Step__Previous_CD_Treatment__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-3">   
+                                                        
+                                                        <lightning:inputField label="Previous MH Treatment"
+                                                                              fieldName="Lightning_Step__Previous_MH_Treatment__c"
+                                                                              aura:id="Lightning_Step__Previous_MH_Treatment__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">  
+                                                        <lightning:inputField label="Mental Health Issues"
+                                                                              fieldName="Lightning_Step__Mental_Health_Issues__c"
+                                                                              aura:id="Lightning_Step__Mental_Health_Issues__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">  
+                                                        <lightning:inputField label="Medical Issues"
+                                                                              fieldName="Lightning_Step__Medical_Issues__c"
+                                                                              aura:id="Lightning_Step__Medical_Issues__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-3">   
+                                                        
+                                                        <lightning:inputField label="Current Medications"
+                                                                              fieldName="Lightning_Step__Current_Medications__c"
+                                                                              aura:id="Lightning_Step__Current_Medications__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">  
+                                                        <lightning:inputField label="Potential Eating Disorder"
+                                                                              fieldName="Lightning_Step__Potential_Eating_Disorder__c"
+                                                                              aura:id="Lightning_Step__Potential_Eating_Disorder__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-3">  
+                                                        <lightning:inputField label="Sleep Apnea"
+                                                                              fieldName="Lightning_Step__Sleep_Apnea__c"
+                                                                              aura:id="Lightning_Step__Sleep_Apnea__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        
+                                                        <lightning:inputField label="Please provide detail for any areas checked"
+                                                                              fieldName="Lightning_Step__Provide_detail_for_any_areas_checked__c"
+                                                                              aura:id="Lightning_Step__Provide_detail_for_any_areas_checked__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">  
+                                                        <lightning:inputField label="Substance of Choice"
+                                                                              fieldName="Lightning_Step__Substance_of_Choice__c"
+                                                                              aura:id="Lightning_Step__Substance_of_Choice__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-1">  
+                                                        <lightning:inputField label="Substances: What are they using, how much, and for how long?"
+                                                                              fieldName="Lightning_Step__Substances__c"
+                                                                              aura:id="Lightning_Step__Substances__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                            </div> </div>
+                                    </lightning:accordionSection>
+                                </div>
+                                <div class="slds-section" aura:id="insuredInfo">
+                                    <lightning:accordionSection name="Insured Information" label="Insured Information"> 
+                                        <div class="slds-section slds-is-open" aura:id="insInfo">
+                                            <div class="slds-section__content" id="insInfoId">
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-1">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Lead_Relationship_to_insured__c"
+                                                                              aura:id="Lightning_Step__Lead_Relationship_to_insured__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_First_Name__c"
+                                                                              aura:id="Lightning_Step__Insured_First_Name__c" />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_Last_Name__c"
+                                                                              aura:id="Lightning_Step__Insured_Last_Name__c"
+                                                                              />    
+                                                        
+                                                    </div>                             
+                                                </div>                        
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_Middle_Name__c"
+                                                                              aura:id="Lightning_Step__Insured_Middle_Name__c"
+                                                                              />    
+                                                        
+                                                    </div> 
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_DOB__c"
+                                                                              aura:id="Lightning_Step__Insured_DOB__c"
+                                                                              />
+                                                    </div>
+                                                    
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_Gender__c"
+                                                                              aura:id="Lightning_Step__Insured_Gender__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_Phone__c"
+                                                                              aura:id="Lightning_Step__Insured_Phone__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_mobile_phone__c"
+                                                                              aura:id="Lightning_Step__Insured_mobile_phone__c" />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_Work_Phone__c"
+                                                                              aura:id="Lightning_Step__Insured_Work_Phone__c"
+                                                                              />    
+                                                        
+                                                    </div>                             
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_Address__c"
+                                                                              aura:id="Lightning_Step__Insured_Address__c" />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_City__c"
+                                                                              aura:id="Lightning_Step__Insured_City__c"
+                                                                              />    
+                                                        
+                                                    </div>                             
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_State__c"
+                                                                              aura:id="Lightning_Step__Insured_State__c" />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_Postal_Code__c"
+                                                                              aura:id="Lightning_Step__Insured_Postal_Code__c" />
+                                                    </div>                             
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Insured_Country__c"
+                                                                              aura:id="Lightning_Step__Insured_Country__c" />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Employer__c"
+                                                                              aura:id="Lightning_Step__Employer__" />
+                                                    </div>
+                                                </div>
+                                            </div></div>
+                                    </lightning:accordionSection>
+                                </div>
+                                <aura:if isTrue="{!v.fundSource eq 'Insurance'}">
+                                    <div class="slds-section" aura:id="insuranceInfo">
+                                        <lightning:accordionSection name="Insurance Information" label="Insurance Information"> 
+                                            <div class="slds-section slds-is-open" aura:id="InsInfo">
+                                                <div class="slds-section__content" id="InsInfoId">
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:select name="insuranceId" label="Which Company" aura:id="insId" value="{!v.selectedValue}" onchange="{!c.onInsChange}">
+                                                                <aura:iteration items="{!v.insOptions}" var="option">
+                                                                    <option text="{!option.label}" value="{!option.id}" selected="{!option.selected}"/>
+                                                                </aura:iteration>
+                                                            </lightning:select>
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Policy_Home_State__c"
+                                                                                  aura:id="Lightning_Step__Policy_Home_State__c"
+                                                                                  />
+                                                        </div>  
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">  
+                                                            <lightning:inputField fieldName="Lightning_Step__Insurance_Program__c"
+                                                                                  aura:id="Lightning_Step__Insurance_Program__c"
+                                                                                  />
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-2">  
+                                                            <lightning:inputField fieldName="Lightning_Step__Plan_Priority__c"
+                                                                                  aura:id="Lightning_Step__Plan_Priority__c"
+                                                                                  />
+                                                        </div>
+                                                    </div> 
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Admission_Source__c"
+                                                                                  aura:id="Lightning_Step__Admission_Source__c"
+                                                                                  />
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Plan__c"
+                                                                                  aura:id="Lightning_Step__Plan__c"
+                                                                                  />
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Benefits_Phone__c"
+                                                                                  aura:id="Lightning_Step__Benefits_Phone__c"
+                                                                                  />
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Pre_Cert_Phone__c"
+                                                                                  aura:id="Lightning_Step__Pre_Cert_Phone__c"
+                                                                                  />
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Payor_Fax__c"
+                                                                                  aura:id="Lightning_Step__Payor_Fax__c"
+                                                                                  />
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-2">  
+                                                            <lightning:inputField label="Group Number"
+                                                                                  fieldName="Lightning_Step__Group_Number__c"
+                                                                                  aura:id="Lightning_Step__Group_Number__c"
+                                                                                  />
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Policy__c"
+                                                                                  aura:id="Lightning_Step__Policy__c"
+                                                                                  />
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Member_Id__c"
+                                                                                  aura:id="Lightning_Step__Member_Id__c"
+                                                                                  />
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Verification_Status__c"
+                                                                                  aura:id="Lightning_Step__Verification_Status__c"
+                                                                                  />
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Group_Name__c"
+                                                                                  aura:id="Lightning_Step__Group_Name__c"
+                                                                                  />
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Home_Insurance_Company__c"
+                                                                                  aura:id="Lightning_Step__Home_Insurance_Company__c"
+                                                                                  />
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div> 
+                                        </lightning:accordionSection>
+                                    </div>
+                                </aura:if>
+                                <aura:if isTrue="{!or(v.fundSource eq 'Private Pay', v.fundSource eq 'Scholarship')}">
+                                    <div class="slds-section" aura:id="payorDetails">
+                                        <lightning:accordionSection name="Payor Details" label="Payor Details"> 
+                                            <div class="slds-section slds-is-open" aura:id="PayorList">
+                                                <div class="slds-section__content" id="PayorId">
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Plan_Priority__c"
+                                                                                  aura:id="Lightning_Step__Plan_Priority__c"
+                                                                                  
+                                                                                  />
+                                                        </div> 
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField fieldName="Lightning_Step__Admission_Source__c"
+                                                                                  aura:id="Lightning_Step__Admission_Source__c"
+                                                                                  
+                                                                                  />
+                                                        </div> 
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField label="Private Pay Type"
+                                                                                  fieldName="Lightning_Step__Private_Pay_Type_Pick__c"
+                                                                                  aura:id="Lightning_Step__Private_Pay_Type_Pick__c"
+                                                                                  />
+                                                        </div>
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            
+                                                            <lightning:inputField label="Payor Address"
+                                                                                  fieldName="Lightning_Step__Payor_Address__c"
+                                                                                  aura:id="Lightning_Step__Payor_Address__c"
+                                                                                  
+                                                                                  />
+                                                        </div>
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField label="Payor City"
+                                                                                  fieldName="Lightning_Step__Payor_City__c"
+                                                                                  aura:id="Lightning_Step__Payor_City__c"
+                                                                                  
+                                                                                  />
+                                                        </div> 
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField label="Postal State"
+                                                                                  fieldName="Lightning_Step__Payor_State__c"
+                                                                                  type="Number"
+                                                                                  aura:id="Lightning_Step__Payor_State__c"
+                                                                                  
+                                                                                  />
+                                                        </div> 
+                                                    </div>
+                                                    <div class="slds-grid">
+                                                        <div class="slds-col slds-size_1-of-2">   
+                                                            <lightning:inputField label="Payor ZipCode"
+                                                                                  fieldName="Lightning_Step__Payor_Zip_Code__c"
+                                                                                  aura:id="Lightning_Step__Payor_Zip_Code__c"
+                                                                                  
+                                                                                  />
+                                                        </div> 
+                                                        
+                                                    </div> 
+                                                </div>
+                                            </div> 
+                                        </lightning:accordionSection>
+                                    </div>
+                                </aura:if>
+                                <div class="slds-section" aura:id="callerInfo">
+                                    <lightning:accordionSection name="Caller Information" label="Caller Information"> 
+                                        <div class="slds-section slds-is-open" aura:id="callerInfoId">
+                                            <div class="slds-section__content" id="callerIn">
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Caller_First_Name__c"
+                                                                              aura:id="Lightning_Step__Caller_First_Name__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Caller_Last_Name__c"
+                                                                              aura:id="Lightning_Step__Caller_Last_Name__c" />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Caller_Primary_Phone__c"
+                                                                              aura:id="Lightning_Step__Caller_Primary_Phone__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Caller_Mobile_Phone__c"
+                                                                              aura:id="Lightning_Step__Caller_Mobile_Phone__c" />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Caller_E_mail__c"
+                                                                              aura:id="Lightning_Step__Caller_E_mail__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Relation_to_Potential_Client__c"
+                                                                              aura:id="Lightning_Step__Relation_to_Potential_Client__c" />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Purpose_of_Call_Primary_Reason_for_Call__c"
+                                                                              aura:id="Lightning_Step__Purpose_of_Call_Primary_Reason_for_Call__c"/>
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__How_did_you_hear_about_us__c"
+                                                                              aura:id="Lightning_Step__How_did_you_hear_about_us__c"/>
+                                                    </div>                       
+                                                </div> 
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Primary_Reason_for_Call__c"
+                                                                              aura:id="Lightning_Step__Primary_Reason_for_Call__c"/>
+                                                    </div> 
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Referral_Source_Type__c"
+                                                                              aura:id="Lightning_Step__Referral_Source_Type__c"/>
+                                                    </div> 
+                                                </div> 
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField label='Caller Organization'
+                                                                              fieldName="Lightning_Step__Caller_Organization__c"
+                                                                              aura:id="Lightning_Step__Caller_Organization__c"/>
+                                                    </div> 
+                                                    <div class="slds-col slds-size_1-of-2">                                 
+                                                        <lightning:inputField fieldName="Lightning_Step__Caller_is_Referral_Source__c"
+                                                                              aura:id="Lightning_Step__Caller_is_Referral_Source__c"/>
+                                                    </div> 
+                                                </div>
+                                            </div></div>
+                                    </lightning:accordionSection>
+                                </div>
+                                <div class="slds-section" aura:id="caseInfo">
+                                    <lightning:accordionSection name="Case Results" label="Result of Contact"> 
+                                        <div class="slds-section slds-is-open" aura:id="CaseInfoStatus">
+                                            <div class="slds-section__content" id="CaseInfoList">
+                                                <div class="slds-grid">
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Result_of_Call__c"
+                                                                              aura:id="Lightning_Step__Result_of_Call__c"
+                                                                              />       
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2"> 
+                                                        <lightning:inputField fieldName="Lightning_Step__Status__c"
+                                                                              aura:id="Lightning_Step__Status__c"
+                                                                              />       
+                                                    </div>                            
+                                                </div>                        
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Locations__c"
+                                                                              aura:id="Lightning_Step__Locations__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                         <lightning:inputField fieldName="Lightning_Step__Program__c"
+                                                                              aura:id="Lightning_Step__Program__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Potential_for_Admission__c"
+                                                                              aura:id="Lightning_Step__Potential_for_Admission__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                         <lightning:inputField fieldName="Lightning_Step__Projected_Admission_Date__c"
+                                                                              aura:id="Lightning_Step__Projected_Admission_Date__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                                <div class="slds-grid gridMargin">
+                                                    <div class="slds-col slds-size_1-of-2">     
+                                                        <lightning:inputField fieldName="Lightning_Step__Case_Disposition__c"
+                                                                              aura:id="Lightning_Step__Case_Disposition__c"
+                                                                              />
+                                                    </div>
+                                                    <div class="slds-col slds-size_1-of-2">   
+                                                        <lightning:inputField fieldName="Lightning_Step__Additional_Note__c"
+                                                                              aura:id="Lightning_Step__Additional_Note__c"
+                                                                              />
+                                                    </div>
+                                                </div>
+                                            </div></div>
+                                    </lightning:accordionSection>
+                                </div>
+                            </lightning:accordion>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+                <lightning:button variant="Brand" class="slds-button" type="submit" label="Submit" disabled="{!v.dateValidationError}"/>
+                <lightning:button variant="Neutral" class="slds-button" label="Cancel" onclick="{!c.closeModal}"/>
+            </div>   
+        </lightning:recordEditForm> 
+        <lightning:navigation aura:id="navService"/>
+    </aura:if>
+</aura:component>

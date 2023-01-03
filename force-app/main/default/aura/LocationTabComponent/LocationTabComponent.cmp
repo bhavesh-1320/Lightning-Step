@@ -1,0 +1,52 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" controller="LocationCmpClass" >
+	 <aura:attribute name="locList" type="Location__c[]"/>
+    <aura:attribute name="columns" type="List"/>
+   <aura:attribute name="pageNumber" type="Integer" default="1"/>
+    <aura:attribute name="showHeader" type="Boolean" default="false"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="records" type="Integer" default="10"/>
+    <aura:attribute name="isLastPage" type="Boolean" default="false"/>
+    <aura:attribute name="dataSize" type="Integer" default="0"/>
+    <aura:attribute name="ShowSpinner"  type="Boolean" />
+    <!-- handlers-->
+    <aura:handler name="init" value="{! this }" action="{!c.init}"/>
+
+
+    <!-- the container element determine the height of the datatable -->
+ <div >
+        <div class="slds-clearfix">
+            <div class="slds-page-header" role="banner">
+                <p class="slds-page-header__title">Programs</p>
+            </div>
+        </div>
+         
+     <lightning:datatable
+                keyField="id"
+                data="{!v.locList}"
+                columns="{!v.columns}"
+                hideCheckboxColumn="true"
+                          />
+     
+     <aura:if isTrue="{!v.showHeader}">
+         <div class="slds-clearfix">
+             <div class="slds-page-header" role="banner">
+                 <div class="slds-float_right">            
+                     <lightning:button label="Prev" iconName="utility:chevronleft" iconPosition="left"
+                                       onclick="{!c.handlePrev}" disabled="{! v.pageNumber == 1}"/>
+                     <lightning:button label="Next" iconName="utility:chevronright" iconPosition="right"
+                                       disabled="{! v.isLastPage}" onclick="{!c.handleNext}"/>
+                 </div>
+                 <p class="slds-page-header__title">Page {!v.pageNumber} | Showing records from {! ((v.pageNumber-1)*(v.pageSize)+1)+' to '+((v.pageNumber-1)*v.pageSize+v.dataSize)}</p>
+             </div>
+         </div>
+     </aura:if>
+    </div>
+     <lightning:spinner
+      aura:id="mySpinner"
+      alternativeText="Processing.."
+      title="Processing.."
+      variant="brand"
+      size="large"
+      class="slds-hide" />
+   
+</aura:component>

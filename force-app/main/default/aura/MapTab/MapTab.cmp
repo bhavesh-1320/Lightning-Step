@@ -1,0 +1,159 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" controller="MapCmpClass" access="global" >
+    <aura:attribute name="pageNumber" type="Integer" default="1"/>
+    <aura:attribute name="showHeader" type="Boolean" default="false"/>
+    <aura:attribute name="pageSize" type="Integer" default="10"/>
+    <aura:attribute name="isLastPage" type="Boolean" default="false"/>
+    <aura:attribute name="dataSize" type="Integer" default="0"/>
+    <aura:attribute name="ShowSpinnerMap"  type="Boolean" />
+    <aura:attribute name="records" type="Integer" default="10"/>
+    <aura:attribute name="objectName" type="String"/>
+    <aura:attribute name="lstKeyMap" type="List"/>
+    <aura:attribute name="start" type="Integer" default="1"/>
+    <aura:attribute name="InsertMap" type="Map"/>
+    <aura:attribute name="openDropDown" type="Boolean" default="false" />
+    <aura:attribute name="objUnedit" type="Boolean" default="false" />
+    <aura:attribute name="selectedOption" type="String" />
+    <aura:attribute name="showInput"  type="Boolean" default="false"/>
+    <aura:attribute name="updatedValues" type="Map"/>
+    
+    <!-- handlers-->
+    <aura:handler name="init" value="{! this }" action="{!c.init}"/>
+    
+    <div >
+        <div class="slds-clearfix">
+            <div class="slds-page-header" role="banner">
+                <p class="slds-page-header__title">Map Fields</p>
+            </div>
+        </div>
+        
+        <div class="slds-grid gridMargin">
+            <div class="slds-col slds-size_1-of-2">     
+                <lightning:input label='Object Name' disabled="{!v.objUnedit}" type="text" aura:id="objectName" value="{!v.objectName}"  placeholder="Enter Object API Name" class="slds-form-element__control  slds-form-element"  ></lightning:input>
+            </div>
+            <div class="slds-col slds-size_1-of-2">     
+                <lightning:button variant="brand" label="Map" title="Map" onclick="{!c.mapObj}" class="slds-m-left_x-large slds-m-top_large" />
+                <lightning:button variant="brand" label="Sync Picklist Fields" title="Sync Picklist Fields" onclick="{!c.syncPickField}" class="slds-m-left_xxx-large slds-m-top_large" />
+                <aura:if isTrue="{!v.showInput}">
+                    <lightning:button variant="success" label="Save" title="Save" onclick="{!c.saveRecs}" class="slds-m-left_xxx-large slds-m-top_large" />
+                    <lightning:button variant="Destructive" label="Cancel" title="Cancel" onclick="{!c.handleCancel}" class="slds-m-left_xxx-large slds-m-top_large" />
+                </aura:if>
+            </div>
+        </div>
+        
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-m-top_large" aria-labelledby="element-with-table-label other-element-with-table-label">
+                <thead>
+                    <tr class="slds-line-height_reset">
+                        <th class="" scope="col">
+                            <div class="slds-truncate" title="InqFieldLabelName">Inquiry Field Name</div>
+                        </th>
+                        <aura:if isTrue="{!v.showInput}">
+                            <th class="" scope="col">
+                                <div class="slds-truncate" title="ObjFieldApiName">{!v.objectName} Field Name</div>
+                            </th>
+                        </aura:if>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.lstKeyMap}" indexVar="index" var="item">
+                        
+                            <tr class="slds-hint-parent">
+                                <td data-label="Label">
+                                    <div class="slds-truncate">{!item.label}</div>
+                                </td>
+                                <aura:if isTrue="{!v.showInput}">
+                                    <td data-label="Object Field Name">
+                                        <div class="slds-form-element">
+                                            <div class="slds-form-element__control">
+                                                <div class="slds-combobox_container">
+                                                    <div class="{! v.openDropDown ? 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click slds-is-open' : 'slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click'}"
+                                                         aria-expanded="true" aria-haspopup="listbox" role="combobox">
+                                                        <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right" role="none">
+                                                            <aura:if isTrue="{!item.showWarning}">
+                                                                <label style='color:red;'>Please select value from list.</label>
+                                                                <br></br>
+                                                            </aura:if>
+                                                            <input type="text"
+                                                                   data-row-index="{!index}"
+                                                                   class="slds-input slds-combobox__input slds-has-focus slds-combobox__input-value"
+                                                                   id="combobox-id-21" aria-autocomplete="list" aria-controls="listbox-id-11"
+                                                                   autocomplete="off" oninput="{!c.searchHandler}" role="textbox" placeholder="Search..."
+                                                                   value="{!item.value}" />
+                                                            <aura:if isTrue="{!(empty(item.value))}">
+                                                                <aura:if isTrue="{!item.showWarning}">
+                                                                    <span style='margin-top:0%;' class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                                                        <lightning:icon iconName="utility:search" size="x-small" />
+                                                                    </span>
+                                                                    <aura:set attribute="else">
+                                                                        <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right">
+                                                                            <lightning:icon iconName="utility:search" size="x-small" />
+                                                                        </span>
+                                                                    </aura:set>
+                                                                </aura:if>
+                                                                <aura:set attribute="else">
+                                                                    <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right"
+                                                                            title="Clear the text input" id="{!index}" onclick="{!c.clearOption}">
+                                                                        <lightning:icon iconName="utility:clear" size="x-small" />
+                                                                    </button>
+                                                                </aura:set>
+                                                            </aura:if>
+                                                        </div>
+                                                        <aura:if isTrue="{!not(empty(item.values))}">
+                                                            <div id="listbox-id-11" class="slds-dropdown slds-dropdown_length-5 slds-dropdown_fluid"
+                                                                 role="listbox">
+                                                                <ul class="slds-listbox slds-listbox_vertical" role="presentation">
+                                                                    
+                                                                    <aura:iteration items="{!item.values}" var="result">
+                                                                        <li role="presentation" class="slds-listbox__item" data-index="{!index}"
+                                                                            data-value="{!result}" onclick="{!c.optionClickHandler}">
+                                                                            <div
+                                                                                 class="slds-media slds-listbox__option slds-listbox__option_plain slds-media_small"
+                                                                                 role="option">
+                                                                                <span class="slds-media__figure slds-listbox__option-icon"></span>
+                                                                                <span class="slds-media__body">
+                                                                                    <span class="slds-truncate" title="Fields">
+                                                                                        <span>{!result}</span>
+                                                                                    </span>
+                                                                                </span>
+                                                                            </div>
+                                                                        </li>
+                                                                    </aura:iteration>
+                                                                    
+                                                                </ul>
+                                                            </div>
+                                                        </aura:if>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </aura:if>
+                            </tr>
+                        
+                    </aura:iteration>
+                </tbody>
+            </table>
+        
+        <aura:if isTrue="{!v.showHeader}"> 
+            <div class="slds-clearfix">
+                <div class="slds-page-header" role="banner">
+                    <div class="slds-float_right">            
+                        <lightning:button label="Prev" iconName="utility:chevronleft" iconPosition="left"
+                                          onclick="{!c.handlePrev}" disabled="{! v.pageNumber == 1}"/>
+                        <lightning:button label="Next" iconName="utility:chevronright" iconPosition="right"
+                                          disabled="{! v.isLastPage}" onclick="{!c.handleNext}"/>
+                    </div>
+                    <p class="slds-page-header__title">Page {!v.pageNumber} | Showing records from {! ((v.pageNumber-1)*(v.pageSize)+1)+' to '+((v.pageNumber-1)*v.pageSize+v.dataSize)}</p>
+                </div>
+            </div>
+        </aura:if>
+    </div>
+    <lightning:spinner
+                       aura:id="mySpinner"
+                       alternativeText="Processing.."
+                       title="Processing.."
+                       variant="brand"
+                       size="large"
+                       class="" />
+    
+    
+</aura:component>

@@ -1,0 +1,21 @@
+.THIS .leftPaddingClass {
+    padding-left: 2rem;
+}
+ 
+.THIS .pillSize{
+ width:100%;
+}
+
+.THIS .slds-pill__label
+{
+    margin-right: 64%;
+}
+
+.THIS#callStyleCustomLookupLocOne {
+    min-height:100px;
+    margin-top:0px !important 
+}
+
+.THIS#callStyleCustomLookupLocTwo {
+    height:10rem;
+}

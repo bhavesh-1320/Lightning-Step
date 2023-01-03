@@ -1,0 +1,17 @@
+<aura:component implements="flexipage:availableForRecordHome,force:hasRecordId" access="global" >
+	 <lightning:layout>
+        <lightning:layoutItem padding="around-large">
+           
+        </lightning:layoutItem>
+    </lightning:layout>
+    <lightning:layout>
+        <lightning:layoutItem padding="around-small">
+            Sidebar
+            <!-- Other component markup here -->
+        </lightning:layoutItem>
+        <lightning:layoutItem padding="around-small">
+            Content
+            <!-- Other component markup here -->
+        </lightning:layoutItem>
+    </lightning:layout>
+</aura:component>

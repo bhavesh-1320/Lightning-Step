@@ -1,0 +1,171 @@
+<aura:component  controller="UserSpecificeOwnerkey" implements="flexipage:availableForAllPageTypes" access="global" >
+    <aura:attribute name="wrapList" type="list"/>
+    <aura:attribute name="showEdit" type="Boolean" default="false" />
+    <aura:attribute name="showTable" type="Boolean" default="true" />
+    <aura:attribute name="userName" type="string"/>
+    <aura:attribute name="clientOwnerKey" type="string"/>
+    <aura:attribute name="showOwner" type="Boolean" default="false" />
+    <aura:attribute name="SelectOwnerKeyError" type="Boolean" default="false" /> 
+    <aura:attribute name="ShowRemoveButton" type="Boolean" default="false" /> 
+    <aura:attribute name="SelectedAsdefaultUser" type="Boolean" default="false" /> 
+    <aura:attribute name="SelectAsDefaultUser" type="Boolean" default="false" /> 
+    <aura:attribute name="showCheckbox" type="Boolean" default="false" /> 
+    <aura:attribute name="UserIdd" type="string"/>
+    <aura:attribute name="selectedItem" type="string"/>
+    <aura:handler name="init" value="{!this}" action="{!c.myAction}" access="PUBLIC"/>
+    <aura:handler name="change" value="{!v.clientOwnerKey}" action="{!c.checkOwnerKeyVal}" />
+    <aura:method name="RefreshTableView" action="{!c.myAction}" access="public"/> 
+    
+    <!--It shows the table with user values with it owner key/-->
+    <aura:if isTrue="{!v.showTable}">
+        <div class="container-fluid slds-table_edit_container slds-is-relative" >
+            <table class="slds-table slds-table_cell-buffer slds-table_bordered slds-table_col-bordered slds-m-top--small slds-table_resizable-cols slds-table_fixed-layout slds-no-cell-focus slds-table_edit TableStyle" role="grid" >
+                <thead>
+                    <tr class="slds-line-height_reset">					
+                        <th scope="col" id="callStyleUOKTOne">
+                            <div class="slds-truncate" title="S.No">S.No</div>
+                        </th>
+                        <th scope="col" >
+                            <div class="slds-truncate paddingcell" title="UserName">User Name</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate paddingcell" title="OwnerKey">Owner Key</div>
+                        </th>
+                        <th scope="col">
+                            <div class="slds-truncate paddingcell" title="userdefault">Company Default User</div>
+                        </th>
+                        <th scope="col"  >
+                            <div class="slds-truncate paddingcell" title="Action">Action</div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <aura:iteration items="{!v.wrapList}" var="obj">
+                        <tr class="slds-line-height_reset">                           
+                            <th scope="row" id="callStyleUOKTTwo">
+                                <div class="slds-truncate" title="{!obj.row}">
+                                    {!obj.row}
+                                </div>
+                            </th> 
+                            <th scope="row" >
+                                <div  title="{!obj.UserName}">
+                                    {!obj.UserName}  
+                                </div>
+                            </th>
+                            <th scope="row" >
+                                <div class="slds-truncate" title="{!obj.OwnerKey}">
+                                    
+                                    {!obj.OwnerKey}
+                                    
+                                </div>
+                            </th>
+                            <th scope="row" >
+                                <div class="slds-truncate" title="{!obj.defaultUsers}">
+                                    <aura:if isTrue="{!obj.defaultUsers}" >
+                                        <lightning:input type="checkbox-button" name="DefaultUser" checked="{!obj.defaultUsers}" disabled="true"/>
+                                    </aura:if>                        
+                                </div>
+                            </th>
+                            <th scope="row" >
+                                <lightning:button tabindex="{!obj.UserId}" label="" iconName="utility:edit" iconPosition="right" onclick="{!c.editUserInfo}"  class="hidebtnfocus"/>
+                                <span class="slds-assistive-text">Edit</span>
+                            </th>
+                            
+                            
+                        </tr>
+                    </aura:iteration>                	  
+                </tbody>
+                
+                
+                <tfoot >
+                    
+                </tfoot>
+                
+            </table>
+        </div>
+    </aura:if>
+    
+    <!--/ error message when owner key is left empty in edit functionality-->
+    <!-- It opens the modal popup to edit the value of user owner key/-->
+    <aura:if isTrue="{!v.showEdit}">
+        <section role="dialog" tabindex="-1" aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container ContainerSize" >
+                <!-- Modal/Popup Box Header Starts here-->
+                <header class="slds-modal__header">
+                    
+                    <lightning:buttonIcon iconName="utility:close"
+                                          onclick="{!c.cancelAction}"
+                                          alternativeText="close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"/>
+                    
+                    <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Change Owner type</h2>
+                    
+                </header>
+                <!--Modal/Popup Box Body Starts here-->
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    
+                    <div class="slds-p-around_medium lgc-bg" >
+                        
+                        <div class="slds-grid">
+                            <div class="slds-col slds-size_8-of-8">
+                                <lightning:input  label="User Name"  aura:id="UserName" value="{!v.userName}" disabled="true"></lightning:input>
+                            </div>
+                            <div class="slds-col slds-size_1-of-8"></div>
+                        </div>
+                        
+                        
+                        <div class="slds-grid GridStyleCss">
+                            <div class="slds-col slds-size_8-of-8">
+                                <aura:if isTrue="{!v.showOwner==false}">
+                                    <lightning:input  label="Owner Key" type="password"  aura:id="clientownerkey" value="{!v.clientOwnerKey}"  placeholder="" ></lightning:input>
+                                </aura:if>
+                                <aura:if isTrue="{!v.showOwner==true}">
+                                    <lightning:input  label="Owner Key" type="text"  aura:id="clientownerkeytext" value="{!v.clientOwnerKey}"  placeholder="" ></lightning:input>
+                                    
+                                </aura:if>
+                            </div>
+                            
+                            <div class="slds-col slds-size_2-of-8 slds-align-middle ModalpopupStyle" >
+                                <button class="slds-input__icon slds-input__icon_right slds-button slds-button_icon iconheight DivButtonStyle" 
+                                        onclick="{!c.showOwnerKey}">
+                                    
+                                    <lightning:icon class="slds-icon slds-icon slds-icon_small slds-icon-text-default" iconName="utility:preview" size="small" alternativeText="icon" />
+                                </button>       
+                            </div>
+                        </div>
+                        <div class="slds-col slds-size_1-of-8"></div>  
+                        
+                    </div>
+                    
+                    <div class="slds-grid">
+                        <div class="slds-col slds-size_8-of-8">
+                            <aura:if isTrue="{!v.showCheckbox}">
+                                <lightning:input type="checkbox" label="Select User as A Default User" name="SelectUserAsDefault" checked="{!v.SelectAsDefaultUser}" onclick="{!c.checkSelectAsDefaultValues}"/>
+                            </aura:if>                                                
+                        </div>
+                    </div>
+                    
+                </div>
+                <!--Modal/Popup Box Footer Starts here-->
+                <footer class="slds-modal__footer">
+                    <lightning:button variant="neutral"
+                                      label="Cancel"
+                                      title="Cancel"
+                                      onclick="{!c.cancelAction}"/>
+                    <lightning:button variant="brand"
+                                      label="Save"
+                                      title="Save"
+                                      onclick="{!c.savePanelval}"/>
+                    <aura:if isTrue="{!v.ShowRemoveButton}">
+                        <lightning:button variant="destructive"
+                                          label="Remove"
+                                          title="Remove"
+                                          onclick="{!c.RemoveUserDetail}"/>
+                    </aura:if>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </aura:if>
+</aura:component>

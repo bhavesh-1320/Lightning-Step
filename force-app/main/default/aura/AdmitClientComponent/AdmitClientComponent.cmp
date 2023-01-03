@@ -1,0 +1,137 @@
+<aura:component implements="force:lightningQuickActionWithoutHeader,force:hasRecordId"  controller ="CreateContactController" >
+   
+    <aura:attribute name="ContactIdEmpty" type="boolean" default="false"/>
+    <aura:attribute name="LocationEmpty" type="boolean" default="false"/>
+    <aura:attribute name="ProgramEmpty" type="boolean" default="false"/>
+    <aura:attribute name="DateOfSubmissionEmpty" type="boolean" default="false"/>
+    <aura:attribute name="NameEmpty" type="boolean" default="false"/>
+    <aura:attribute name="SuccessMessage" type="boolean" default="false"/>
+    <aura:attribute name="ShowErrorMessage" type="string"/>
+    <aura:attribute name="Programs" type="Program__c[]" default="[]"/>
+    <aura:attribute name="errorMessage" type="boolean" default="false"/>
+    <aura:attribute name="clientId" type="string"/>	
+    <aura:attribute name="showProgram" type="Boolean" />
+    <aura:attribute name="showModel" type="Boolean" />
+    <aura:attribute name="showError" type="Boolean" />
+    <aura:attribute name="submissionDate" type="string"/>
+     <aura:attribute name="dateValidationError" type="boolean" />
+    <aura:attribute name="showsubmissionDate" type="Boolean"/>
+    <aura:attribute name="locationId" type="string"/>
+    <aura:attribute name="myDate" type="date" />
+    <aura:attribute name="selectedLookUpRecord" type="sObject"/>
+    <aura:attribute name="selectedProgram" type="string"/>
+    <aura:attribute name="submissionDatefield" type="date"/>
+    <aura:attribute name="selectedProgramId" type="string"/>
+    <aura:attribute name="InquiryId" type="string"/>
+    <aura:attribute name="errorResponse" type="string"/>
+    <aura:attribute name="ShowSpinnerLoc" type="Boolean" default="false" />
+    
+	<aura:handler name="init" value="{!this}" action="{!c.doInit}"/>
+    <aura:handler name="change" value="{!v.selectedLookUpRecord}" action="{!c.HandlerselectedLookUpRecord}"/>
+    
+   <ltng:require styles="{!$Resource.AdmitClientComponent}" />
+    
+    <aura:if isTrue="{!v.showError}"> 
+        <div class="demo-only">
+            <div class="slds-modal__container slds-modal_small callStyleAdmitClientCmpOne">
+                <header class="slds-modal__header slds-theme_error slds-theme_alert-texture">
+                    <h2 class="slds-text-heading_medium" id="prompt-heading-id">Message Alert</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="prompt-message-wrapper">
+                    <p class="slds-text-align_center slds-text-heading_small">{!v.ShowErrorMessage}</p>
+                </div>
+            </div>
+        </div>
+    </aura:if>
+    
+    <aura:if isTrue="{!v.showModel}"> 
+        <div>
+            <div class="slds-is-relative">
+                <aura:if isTrue="{! v.ShowSpinnerLoc }">
+                    <lightning:spinner size="medium" variant="brand" />
+                </aura:if>
+                <lightning:recordEditForm aura:id="recordEditForm"
+                                          objectApiName="Lightning_Step__Inquiry__c" recordId="{!v.recordId}" onsubmit="{!c.successMethod}" onsuccess="{!c.handleSucess}" onload="{!c.handleLoad}">
+                    <div class="modal-header slds-modal__header slds-size_1-of-1">
+                        <h4 class="title slds-text-heading--medium">Admit Client</h4>
+                    </div>
+                    <!--End Modal Header-->  
+                    <!--Modal Body-->  
+                    <div class="showFooter slds-scrollable_y callStyleAdmitClientCmpTwo">
+                        <div class="slds-p-around--x-small slds-align_absolute-left slds-size_1-of-1 slds-is-relative">
+                            
+                            <div  >
+                                <!--lightning:messages /-->
+                                <div class="slds-m-around_medium" >
+                                    
+                                    <div class="slds-grid">
+                                        <div class="slds-col slds-size_1-of-2">     
+                                            <lightning:inputField label="First Name"
+                                                                  type="text"
+                                                                  fieldName="Lightning_Step__First_Name__c"
+                                                                  required="true"
+                                                                  disabled="true"/>
+                                        </div>
+                                        <div class="slds-col slds-size_1-of-2">   
+                                            
+                                            <lightning:inputField label="Last Name"
+                                                                  type="text"
+                                                                  fieldName="Lightning_Step__Last_Name__c"
+                                                                  required="true"
+                                                                  disabled="true"/>
+                                        </div>
+                                    </div>
+                                    <aura:if isTrue="{!v.showsubmissionDate}"> 
+                                        <div class="slds-p-around--xx-small">
+                                            <lightning:input aura:id="dob"
+                                                             class="{! v.dateValidationError ? 'slds-has-error' : ''}"
+                                                             type="date" 
+                                                             name="accdob" 
+                                                             value="{!v.myDate}"
+                                                             dateStyle="short" 
+                                                             label="Date of Submission" 
+                                                             onchange="{!c.submissionDate}" required="true"/>
+                                        </div>
+                                        <div class="callStyleAdmitClientCompThree" >
+                                            <lightning:inputField label="Date of Submission"
+                                                                  type="date"
+                                                                  fieldName="Lightning_Step__Date_of_Submission__c"
+                                                                  value="{!v.submissionDatefield}"
+                                                                  />
+                                        </div>
+                                        <aura:if isTrue="{!v.dateValidationError}">
+                                            <div class="slds-text-color_error slds-p-left_x-small">
+                                                Date must be in present or in future..
+                                            </div>
+                                        </aura:if> 
+                                    </aura:if>
+                                    <lightning:inputField label="Select Location"
+                                                          fieldName="Lightning_Step__Locations__c"
+                                                          required="true"
+                                                          aura:id="myAtt"
+                                                          onchange="{!c.myChange}"
+                                                          />
+                                    <aura:if isTrue="{!v.showProgram}"> 
+                                        <c:customLookupLoc objectAPIName="Lightning_Step__Program__c" IconName="custom:custom32" selectedProgram="{!v.selectedLookUpRecord}" label="Programs" locationId="{!v.locationId}"/>
+                                        <div class="callStyleAdmitClientCompFour">
+                                            <lightning:inputField label="Select Program"
+                                                                  fieldName="Lightning_Step__Program__c"
+                                                                  value="{!v.selectedProgramId}"
+                                                                  />
+                                        </div>
+                                    </aura:if>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer slds-modal__footer slds-size_1-of-1">
+                        <lightning:button variant="Brand"  type="submit" class="slds-button" label="Admit" disabled="{!v.dateValidationError}"/>
+                        <lightning:button variant="Neutral" class="slds-button" label="Cancel" onclick="{!c.closeModal}"/>
+                    </div>  
+                </lightning:recordEditForm>
+                
+            </div>
+        </div>
+    </aura:if>
+    
+</aura:component>

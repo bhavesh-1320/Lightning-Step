@@ -1,0 +1,35 @@
+.THIS .spins::after {
+    position: absolute;
+    content: 'Loading';
+    width: 100%;
+    text-align: center;
+    top: calc(50% + 3em);
+    font-weight: bold;
+}
+.THIS .exampleHolder{
+    /*position: relative;*/
+    display: inline-block;
+    width: 80px;
+    height: 80px;
+}
+.THIS .test input {
+    -webkit-text-security: disc !important;
+}
+
+
+.THIS .callStyleLSCCOne {
+    height:100px;
+    width: 100%;
+}
+
+.THIS .callStyleLSCCTwo {
+    padding: 18px;
+}
+
+.THIS .callStyleLSCCThree {
+    display:none
+}
+
+.THIS .callStyleLSCCFour {
+    display:none
+}
